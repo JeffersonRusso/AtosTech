@@ -2,25 +2,16 @@ package br.com.pi.atostech.adapters.out.storage.entities.mapper;
 
 
 import br.com.pi.atostech.adapters.out.storage.entities.course.CourseEntity;
+import br.com.pi.atostech.adapters.out.storage.entities.course.progress.CourseProgressEntity;
 import br.com.pi.atostech.aplication.domain.CourseDomain;
+import br.com.pi.atostech.aplication.domain.VideoDomain;
 import br.com.pi.atostech.aplication.domain.VideoInfoDomain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class CourseEntityMapper {
 
     private static final boolean isActive = true;
-
-    public static CourseEntity toEntity(final String title, final String description, final String path) {
-        return CourseEntity.builder()
-                .title(title)
-                .description(description)
-                .path(path)
-                .isActive(isActive)
-                .createDate(LocalDateTime.now())
-                .build();
-    }
 
     public static List<CourseDomain> toDomain(List<CourseEntity> courseEntities) {
         return courseEntities.stream()
@@ -32,22 +23,48 @@ public class CourseEntityMapper {
         return CourseDomain.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
+                .shortDescription(entity.getShortDescription())
                 .description(entity.getDescription())
                 .path(entity.getPath())
                 .isActive(entity.isActive())
                 .createDate(entity.getCreateDate())
+                .releaseDate(entity.getReleaseDate())
                 .icon(entity.getIcon())
                 .videos(videoInfoDomainDomain)
                 .build();
     }
 
-    public static CourseEntity toEntity(CourseDomain courseDomain) {
+    public static CourseEntity toEntity(CourseDomain domain) {
         return CourseEntity.builder()
-                .title(courseDomain.getTitle())
-                .description(courseDomain.getDescription())
-                .path(courseDomain.getPath())
-                .isActive(courseDomain.getIsActive())
-                .icon(courseDomain.getIcon())
+                .title(domain.getTitle())
+                .shortDescription(domain.getShortDescription())
+                .description(domain.getDescription())
+                .path(domain.getPath())
+                .isActive(domain.getIsActive())
+                .releaseDate(domain.getReleaseDate())
+                .icon(domain.getIcon())
                 .build();
+    }
+
+    public static void updateEntity(CourseEntity entity, CourseDomain domain) {
+        entity.setActive(domain.getIsActive());
+        entity.setShortDescription(domain.getShortDescription());
+        entity.setDescription(domain.getDescription());
+        entity.setReleaseDate(domain.getReleaseDate());
+    }
+
+    public static CourseDomain toDomain(CourseProgressEntity entity) {
+        List<VideoInfoDomain> videoInfoDomain = entity.getVideoProgress().stream().map(video ->
+                new VideoInfoDomain(
+                        video.getVideo().getId(),
+                        video.getVideo().getTitle(),
+                        video.getVideo().getFilePath()
+                )).toList();
+
+//                video.getVideo().getFilePath()).toList();
+        Integer id = entity.getCourse().getId();
+
+//        CourseDomain
+        return null;
     }
 }

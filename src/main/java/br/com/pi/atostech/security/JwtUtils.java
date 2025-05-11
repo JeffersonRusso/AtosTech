@@ -16,7 +16,6 @@ import java.util.List;
 @Component
 public class JwtUtils {
 
-
     private static final String SECRET = "minha-chave-super-secreta-para-jwt-1234567890";
 
     public static String generateToken(String email, List<String> roles) throws JOSEException {

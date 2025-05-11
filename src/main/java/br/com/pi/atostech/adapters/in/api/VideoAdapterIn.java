@@ -7,6 +7,7 @@ import br.com.pi.atostech.adapters.out.storage.video.VideoAdapterOutInterface;
 import br.com.pi.atostech.aplication.domain.VideoDomain;
 import br.com.pi.atostech.aplication.domain.VideoInfoDomain;
 import br.com.pi.atostech.aplication.video.VideoAplicationInterface;
+import br.com.pi.atostech.utils.SecurityContextUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class VideoAdapterIn {
         return ResponseEntity.ok(videoInfoResponseDto);
     }
 
-    @PostMapping("/upload/{course_id}")
+    @PostMapping("/admin/upload/{course_id}")
     public ResponseEntity<DataResponseDto> uploadVideo(@RequestParam("file") MultipartFile file, @PathVariable("course_id") Integer courseId) {
         try {
             if (isNull(file) || isNull(courseId))
@@ -70,7 +71,7 @@ public class VideoAdapterIn {
         return headers;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<DataResponseDto> deleteVideo(@PathVariable Integer id) {
         boolean isDeleted = videoAplicationInterface.deleteVideo(id);
         return isDeleted

@@ -1,9 +1,12 @@
 package br.com.pi.atostech.adapters.out.storage.course;
 
 import br.com.pi.atostech.adapters.out.storage.entities.course.CourseEntity;
+import br.com.pi.atostech.adapters.out.storage.entities.course.progress.CourseProgressEntity;
 import br.com.pi.atostech.adapters.out.storage.entities.mapper.CourseEntityMapper;
 import br.com.pi.atostech.adapters.out.storage.repository.course.CourseRepository;
+import br.com.pi.atostech.adapters.out.storage.repository.course.progress.CourseProgressRepository;
 import br.com.pi.atostech.aplication.domain.CourseDomain;
+import br.com.pi.atostech.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,21 +27,22 @@ public class CourseAdapterOut implements CouseAdapterOutInterface {
     @Autowired
     private final CourseRepository courseRepository;
 
+    @Autowired
+    private final CourseProgressRepository courseProgressRepository;
+
     private static final String COURSE_FOLDER = "course/";
 
     public boolean createCourse(CourseDomain courseDomain) {
         try {
             final Path videoDirectory = Paths.get(COURSE_FOLDER + courseDomain.getTitle());
-            final CourseEntity courseEntity = CourseEntityMapper.toEntity(courseDomain);
-            courseEntity.setCreateDate(LocalDateTime.now());
-            courseEntity.setPath(courseDomain.getTitle());
-            courseRepository.save(courseEntity);
+            final CourseEntity courseProgressEntity = CourseEntityMapper.toEntity(courseDomain);
+            courseProgressEntity.setCreateDate(LocalDateTime.now());
+            courseProgressEntity.setPath(courseDomain.getTitle());
+            courseRepository.save(courseProgressEntity);
             Files.createDirectories(videoDirectory);
             return true;
         } catch (IOException e) {
             throw new RuntimeException("Erro ao criar curso: " + e);
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("O curso com o nome " + courseDomain.getTitle() + " ja existe. Erro: " + e);
         }
     }
 
@@ -51,18 +55,47 @@ public class CourseAdapterOut implements CouseAdapterOutInterface {
         return courseRepository.findById(id);
     }
 
+    public List<Optional<CourseProgressEntity>> findCourseProgressByCourseId(final Integer id) {
+        return courseProgressRepository.findByCourseId(id);
+    }
+
     public Path getCoursePath() {
-       return Paths.get(COURSE_FOLDER);
+        return Paths.get(COURSE_FOLDER);
     }
 
     @Override
-    public boolean update(CourseDomain courseDomain) {
-        Optional<CourseEntity> courseEntityOptional = courseRepository.findById(courseDomain.getId());
-        CourseEntity courseEntity = courseEntityOptional.get();
-        courseEntity.setActive(courseDomain.getIsActive());
-        courseEntity.setDescription(courseDomain.getDescription());
-        courseRepository.save(courseEntity);
+    public boolean update(CourseDomain domain) {
+        CourseEntity entity = courseRepository.findById(domain.getId())
+                .orElseThrow(() -> new RuntimeException("Nao foi possivel encontrar o curso."));
+
+        CourseEntityMapper.updateEntity(entity, domain);
+
+        courseRepository.save(entity);
         return true;
+    }
+
+    public void deleteCourse(CourseEntity courseEntity) {
+        courseRepository.delete(courseEntity);
+    }
+
+    public void deleteDirectory(String path) throws IOException {
+        FileUtils.deleteDirectoryRecursively(Path.of(COURSE_FOLDER + path));
+    }
+
+    public void deleteCourseProgress(CourseEntity entity) {
+        courseProgressRepository.deleteAllByCourse(entity);
+    }
+
+
+    public boolean subscribe(CourseProgressEntity entity) {
+        courseProgressRepository.save(entity);
+        return true;
+    }
+
+    @Override
+    public List<CourseProgressEntity> getCourseProgressByUserEmail(String emailUser) {
+        List<Optional<CourseProgressEntity>> courseProgress = courseProgressRepository.findByUserEmail(emailUser);
+        return courseProgress.stream().map(Optional::get).toList();
     }
 
     private Path createCourseDirectory() {

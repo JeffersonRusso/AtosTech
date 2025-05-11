@@ -20,13 +20,13 @@ public class VideoEntityMapper {
     }
 
     public static VideoEntity toVideoEntity(String videoName, String path, Integer courseId) {
-        CourseEntity courseEntity = new CourseEntity();
-        courseEntity.setId(courseId);
+        CourseEntity courseProgressEntity = new CourseEntity();
+        courseProgressEntity.setId(courseId);
 
         return new VideoEntity(
                 videoName,
                 path,
                 LocalDateTime.now(),
-                courseEntity);
+                courseProgressEntity);
     }
 }

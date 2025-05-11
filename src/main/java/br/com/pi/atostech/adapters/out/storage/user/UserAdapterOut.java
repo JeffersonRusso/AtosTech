@@ -1,5 +1,6 @@
 package br.com.pi.atostech.adapters.out.storage.user;
 
+import br.com.pi.atostech.adapters.out.storage.entities.user.UserRoleEntity;
 import br.com.pi.atostech.adapters.out.storage.entities.user.UserEntity;
 import br.com.pi.atostech.adapters.out.storage.entities.mapper.UserEntityMapper;
 import br.com.pi.atostech.adapters.out.storage.repository.user.UserRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +35,7 @@ public class UserAdapterOut implements UserAdapterOutInterface{
         if(hasUser)
             return false;
         UserEntity userEntity = UserEntityMapper.toEntity(userDomain);
+        userEntity.setRole(UserRoleEntity.USER.name());
         userEntity.setPassword(passwordEncoder.encode(userDomain.getPassword()));
         userRepository.save(userEntity);
         return true;
@@ -45,8 +48,9 @@ public class UserAdapterOut implements UserAdapterOutInterface{
     }
 
     public boolean update(UserDomain userDomain) {
-        if (userRepository.findByEmail(userDomain.getEmail()).isPresent()) {
-            UserEntity userEntity = UserEntityMapper.toEntity(userDomain);
+        Optional<UserEntity> entity = userRepository.findByEmail(userDomain.getEmail());
+        if (entity.isPresent()) {
+            UserEntity userEntity = UserEntityMapper.updateUser(userDomain, entity.get().getId());
             userRepository.save(userEntity);
             return true;
         }
@@ -63,7 +67,17 @@ public class UserAdapterOut implements UserAdapterOutInterface{
     }
 
     @Override
-    public UserDomain getUser(String email) {
-        return null;
+    public UserEntity getUserByEmail(final String email) {
+        return userRepository.findByEmail(email).get();
+    }
+
+    @Override
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public boolean subscribeCourse() {
+        return false;
     }
 }

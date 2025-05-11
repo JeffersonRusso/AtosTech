@@ -28,20 +28,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // usa o Customizer<CorsConfigurer>
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(
-                                        "/**",
-                                        "/user/register",
-                                        "/user/login",
-                                        "/getAllBooks",
-                                        "/admin/**",
-                                        "/course/**"
-                                ).permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/user/get", "/course/**").hasRole("USER")
-                                .anyRequest().authenticated()
+                        .requestMatchers(
+                                "/user/signup",
+                                "/user/signin",
+                                "/getAllBooks",
+                                "/course/list_all_courses",
+                                "/course/get/*"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/admin/**",
+                                "/course/admin/**",
+                                "/user/admin/**",
+                                "/video/admin/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                "/course/subscribe/**",
+                                "/course/user/select",
+                                "/video/stream/")
+                        .hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -51,7 +59,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("http://localhost:4200")); // permite qualquer porta/front em dev
+        config.setAllowedOriginPatterns(List.of("http://localhost:4200")); // permite qualquer porta
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // necessário para JWT com cookies ou headers Authorization

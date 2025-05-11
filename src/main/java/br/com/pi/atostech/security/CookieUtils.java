@@ -3,9 +3,11 @@ package br.com.pi.atostech.security;
 import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class CookieUtils {
 
     public static Cookie generateCookieWithToken(String email, String role) throws JOSEException {
