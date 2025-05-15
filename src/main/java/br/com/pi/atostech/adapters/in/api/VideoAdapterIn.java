@@ -22,7 +22,7 @@ import static java.util.Objects.isNull;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/video")
+@RequestMapping("api/video")
 public class VideoAdapterIn {
 
     @Autowired
