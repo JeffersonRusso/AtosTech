@@ -33,21 +33,21 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/user/signup",
-                                "/user/signin",
-                                "/getAllBooks",
-                                "/course/list_all_courses",
-                                "/course/get/*"
+                                "/api/user/signin",
+                                "/api/getAllBooks",
+                                "/api/course/list_all_courses",
+                                "/api/course/get/*"
                         ).permitAll()
                         .requestMatchers(
-                                "/admin/**",
-                                "/course/admin/**",
-                                "/user/admin/**",
-                                "/video/admin/**"
+                                "/api/admin/**",
+                                "/api/course/admin/**",
+                                "/api/user/admin/**",
+                                "/api/video/admin/**"
                         ).hasRole("ADMIN")
                         .requestMatchers(
-                                "/course/subscribe/**",
-                                "/course/user/select",
-                                "/video/stream/")
+                                "/api/course/subscribe/**",
+                                "/api/course/user/select",
+                                "/api/video/stream/")
                         .hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )

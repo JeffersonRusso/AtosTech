@@ -27,7 +27,7 @@ import static java.util.Objects.isNull;
 @RestController
 @Controller
 @Slf4j
-@RequestMapping(path = "api/user")
+@RequestMapping(path = "/user")
 public class UserAdapterIn {
 
     @Autowired
