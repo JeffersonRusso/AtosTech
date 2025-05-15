@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/user/signup",
+                                "/api/user/signup",
                                 "/user/signin",
                                 "/getAllBooks",
                                 "/course/list_all_courses",
