@@ -22,6 +22,7 @@ public class CourseEntity {
     private Integer id;
     @Column(unique = true)
     private String title;
+    @Column(length = 500)
     private String shortDescription;
     //      ALTER TABLE TB_COURSE MODIFY COLUMN description VARCHAR(2000);
     @Column(length = 2000) // ou outro valor adequado
