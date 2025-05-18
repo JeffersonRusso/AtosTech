@@ -9,6 +9,7 @@ import br.com.pi.atostech.aplication.domain.CourseDomain;
 import br.com.pi.atostech.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,8 @@ public class CourseAdapterOut implements CouseAdapterOutInterface {
     @Autowired
     private final CourseProgressRepository courseProgressRepository;
 
-    private static final String COURSE_FOLDER = "course/";
+    @Value("${spring.local.save.course}")
+    private String COURSE_FOLDER;
 
     public boolean createCourse(CourseDomain courseDomain) {
         try {

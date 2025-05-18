@@ -19,7 +19,7 @@ public class JwtUtils {
     private static final String SECRET = "minha-chave-super-secreta-para-jwt-1234567890";
 
     public static String generateToken(String email, List<String> roles) throws JOSEException {
-        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+            JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .subject(email)
                 .claim("roles", roles.stream().map(role -> "ROLE_" + role).toList())
                 .expirationTime(Date.from(Instant.now().plusSeconds(3600)))

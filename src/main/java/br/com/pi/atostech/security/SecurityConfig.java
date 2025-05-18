@@ -1,5 +1,6 @@
 package br.com.pi.atostech.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +20,9 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${spring.origin}")
+    private String origem;
+
     private final JwtAuthFilter jwtAuthFilter;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
@@ -36,7 +40,8 @@ public class SecurityConfig {
                                 "/api/user/signin",
                                 "/api/getAllBooks",
                                 "/api/course/list_all_courses",
-                                "/api/course/get/*"
+                                "/api/course/get/*",
+                                "/api/user/user-info"
                         ).permitAll()
                         .requestMatchers(
                                 "/api/admin/**",
@@ -59,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("https://igrejanovotempo.com.br"));
+        config.setAllowedOriginPatterns(List.of(origem));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

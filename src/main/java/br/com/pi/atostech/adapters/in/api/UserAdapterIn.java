@@ -11,6 +11,7 @@ import br.com.pi.atostech.aplication.user.UserApplication;
 import br.com.pi.atostech.aplication.user.UserApplicationInterface;
 import br.com.pi.atostech.utils.SecurityContextUtils;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -69,6 +71,17 @@ public class UserAdapterIn {
         boolean isUpdated = userApplicationInterface.updateRole(domain);
 
         return ResponseEntity.status(HttpStatus.OK).body(new DataResponseDto(String.valueOf(isUpdated)));
+    }
+
+    @GetMapping("/user-info")
+    public ResponseEntity<DataResponseDto> getUserInfo() {
+        Collection<String> roles = SecurityContextUtils.getRoles();
+        if(roles.contains("ROLE_ADMIN")) {
+            return ResponseEntity.status(HttpStatus.OK).body(new DataResponseDto("ROLE_ADMIN"));
+        } else if(roles.contains("ROLE_USER")) {
+            return ResponseEntity.status(HttpStatus.OK).body(new DataResponseDto("ROLE_USER"));
+        }
+        throw new RuntimeException("Usuario não logado");
     }
 
     @DeleteMapping
