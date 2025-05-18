@@ -20,7 +20,7 @@ public class CourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true)
+    //@Column(unique = true)
     private String title;
     @Column(length = 500)
     private String shortDescription;
